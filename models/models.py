@@ -1,48 +1,56 @@
-import fastapi
-from sqlalchemy import String, Column, Enum, ForeignKey, Date, Integer
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy import String, Column, ForeignKey, Date, Integer
+from sqlalchemy.orm import relationship
 
-from core.configs import Settings
-
-#tabela de funcionarios
-class funcionario(Settings.DBBaseModel):
-    cpf: str = Column(String(11), primary_key=True,unique= True ,nullable= False)
-    nome:str = Column(String(250) )
-    endereco: str = Column(String(250))
-    estado: str = Column(String(50))
-    data_nasc: Date = Column(Date)
-    rg: str = Column(String(12))
-    telefone:str = Column(String(11))
-    cod_banco: str = Column(String(10), ForeignKey('registroBanco.cod_banco', nome= 'fk_cod_banco'))
-    agencia: str = Column(String(10))
-    conta_corrente:str= Column(String(10))
-    matricula:str= Column(String(10))
-    posto_trabalho:str= Column(String(10))
-    cargo:str= Column(String(10))
-    cidade: str= Column(String(10))
-    centro_custo:str= Column(String(10))
-#definindo relação entre colunas de banco e funcionario
-    rel_registroBanco= relationship('models', back_populates='rel_funcionario')
-
-#tabela de funcionarios
-class registroBanco(Settings.DBBaseModel):
-    cod_banco: str = Column(String(10), primary_key=True, unique=True, nullable=False)
-    nome_banco: str = Column(String(50), nullable=True)
-
-#definindo relação entre colunas de banco e funcionario
-    rel_funcionario= relationship('models', back_populates= 'rel_registroBanco')
+from core.configs import settings
 
 
-class estado(Settings.DBBaseModel):
-    cod_estado: int = Column(Integer, primary_key=True ,nullable=False)
-    estado: str = Column(String(50), nullable=False) 
+# Tabela de funcionários
+class Funcionario(settings.DBBaseModel):
+    __tablename__ = 'funcionario' 
 
-    rel_cidade = relationship('models', back_populates='rel_estado')
+    cpf = Column(String(11), primary_key=True, unique=True, nullable=False)
+    nome = Column(String(250))
+    endereco = Column(String(250))
+    estado = Column(String(50))
+    data_nasc = Column(Date)
+    rg = Column(String(12))
+    telefone = Column(String(11))
+    cod_banco = Column(String(10), ForeignKey('registroBanco.cod_banco', name='fk_cod_banco'))
+    agencia = Column(String(10))
+    conta_corrente = Column(String(10))
+    matricula = Column(String(10))
+    posto_trabalho = Column(String(10))
+    cargo = Column(String(10))
+    cidade = Column(String(10))
+    centro_custo = Column(String(10))
 
-class cidade(Settings.DBBaseModel):
-    cod_municipio: str = Column(String(250), primary_key=True, nullable=False)
-    cod_estado: int = Column(Integer, ForeignKey('estado.cod_estado', nome= 'fk_cod_estado'), nullable=False )
-    habitantes: int = Column(Integer,nullable=False )
-    cidade: str = Column(String(50), nullable=False,)
+    rel_registroBanco = relationship('RegistroBanco', back_populates='rel_funcionario')
 
-    rel_estado = relationship('models', back_populates='rel_cidade')
+# Tabela de registro de banco
+class RegistroBanco(settings.DBBaseModel):
+    __tablename__ = 'registroBanco'
+
+    cod_banco = Column(String(10), primary_key=True, unique=True, nullable=False)
+    nome_banco = Column(String(50), nullable=True)
+
+    rel_funcionario = relationship('Funcionario', back_populates='rel_registroBanco')
+
+# Tabela de estado
+class Estado(settings.DBBaseModel):
+    __tablename__ = 'estado'
+
+    cod_estado = Column(Integer, primary_key=True, nullable=False)
+    estado = Column(String(50), nullable=False)
+
+    rel_cidade = relationship('Cidade', back_populates='rel_estado')
+
+# Tabela de cidade
+class Cidade(settings.DBBaseModel):
+    __tablename__ = 'cidade'
+
+    cod_municipio = Column(String(250), primary_key=True, nullable=False)
+    cod_estado = Column(Integer, ForeignKey('estado.cod_estado', name='fk_cod_estado'), nullable=False)
+    habitantes = Column(Integer, nullable=False)
+    cidade = Column(String(50), nullable=False)
+
+    rel_estado = relationship('Estado', back_populates='rel_cidade')
