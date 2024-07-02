@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   postgres:
@@ -14,7 +14,22 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-
+      
+  python-back:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: Diarias
+    volumes:
+      - ./:/app
+    networks:
+      - my_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
   prometheus:
     image: prom/prometheus:v2.38.0
     container_name: prometheus
