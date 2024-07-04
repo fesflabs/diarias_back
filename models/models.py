@@ -11,18 +11,18 @@ class Funcionario(settings.DBBaseModel):
     cpf = Column(String(11), primary_key=True, unique=True, nullable=False)
     nome = Column(String(250))
     endereco = Column(String(250))
-    estado = Column(String(50))
+    estado = Column(String(250))
     data_nasc = Column(Date)
     rg = Column(String(12))
-    telefone = Column(String(11))
-    cod_banco = Column(String(10), ForeignKey('registroBanco.cod_banco', name='fk_cod_banco'))
-    agencia = Column(String(10))
-    conta_corrente = Column(String(10))
-    matricula = Column(String(10))
-    posto_trabalho = Column(String(10))
-    cargo = Column(String(10))
-    cidade = Column(String(10))
-    centro_custo = Column(String(10))
+    telefone = Column(String(12))
+    cod_banco = Column(String(3), ForeignKey('registroBanco.cod_banco', name='fk_cod_banco'))
+    agencia = Column(String(6))
+    conta_corrente = Column(String(12))
+    matricula = Column(String(20))
+    posto_trabalho = Column(String(250))
+    cargo = Column(String(150))
+    cidade = Column(String(250))
+    centro_custo = Column(String(150))
 
     rel_registroBanco = relationship('RegistroBanco', back_populates='rel_funcionario')
 
@@ -30,8 +30,8 @@ class Funcionario(settings.DBBaseModel):
 class RegistroBanco(settings.DBBaseModel):
     __tablename__ = 'registroBanco'
 
-    cod_banco = Column(String(10), primary_key=True, unique=True, nullable=False)
-    nome_banco = Column(String(50), nullable=True)
+    cod_banco = Column(String(3), primary_key=True, unique=True, nullable=False)
+    nome_banco = Column(String(150), nullable=True)
 
     rel_funcionario = relationship('Funcionario', back_populates='rel_registroBanco')
 
@@ -40,7 +40,7 @@ class Estado(settings.DBBaseModel):
     __tablename__ = 'estado'
 
     cod_estado = Column(Integer, primary_key=True, nullable=False)
-    estado = Column(String(50), nullable=False)
+    estado = Column(String(250), nullable=False)
 
     rel_cidade = relationship('Cidade', back_populates='rel_estado')
 
@@ -51,6 +51,17 @@ class Cidade(settings.DBBaseModel):
     cod_municipio = Column(String(250), primary_key=True, nullable=False)
     cod_estado = Column(Integer, ForeignKey('estado.cod_estado', name='fk_cod_estado'), nullable=False)
     habitantes = Column(Integer, nullable=False)
-    cidade = Column(String(50), nullable=False)
+    cidade = Column(String(250), nullable=False)
 
     rel_estado = relationship('Estado', back_populates='rel_cidade')
+
+
+class Trechos(settings.DBBaseModel):
+    __tablename__ = 'trechos'
+
+    origem_cidade = Column(String(250), nullable=False)
+    origem_estado = Column(String(250), nullable=False)
+    destino_cidade = Column(String(250), nullable=False)
+    destino_estado = Column(String(250), nullable=False)
+    data = Column(Date, nullable=False)
+    hora = Column(String(10))
