@@ -49,7 +49,7 @@ class Estado(settings.DBBaseModel):
 class Cidade(settings.DBBaseModel):
     __tablename__ = 'cidade'
 
-    cod_municipio = Column(String(250), primary_key=True, autoincrement=True)
+    cod_municipio = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     cod_estado = Column(Integer, ForeignKey('estado.cod_estado', name='fk_cod_estado'), nullable=False)
     habitantes = Column(Integer, nullable=False)
     cidade = Column(String(250), nullable=False)
