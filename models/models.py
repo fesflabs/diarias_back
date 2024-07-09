@@ -31,6 +31,7 @@ class RegistroBanco(settings.DBBaseModel):
     __tablename__ = 'registroBanco'
 
     cod_banco = Column(String(3), primary_key=True, unique=True, nullable=False)
+    num_banco = Column(String(3), nullable=True)
     nome_banco = Column(String(150), nullable=True)
 
     rel_funcionario = relationship('Funcionario', back_populates='rel_registroBanco')
@@ -48,20 +49,9 @@ class Estado(settings.DBBaseModel):
 class Cidade(settings.DBBaseModel):
     __tablename__ = 'cidade'
 
-    cod_municipio = Column(String(250), primary_key=True, nullable=False)
+    cod_municipio = Column(String(250), primary_key=True, autoincrement=True)
     cod_estado = Column(Integer, ForeignKey('estado.cod_estado', name='fk_cod_estado'), nullable=False)
     habitantes = Column(Integer, nullable=False)
     cidade = Column(String(250), nullable=False)
 
     rel_estado = relationship('Estado', back_populates='rel_cidade')
-
-
-class Trechos(settings.DBBaseModel):
-    __tablename__ = 'trechos'
-
-    origem_cidade = Column(String(250), nullable=False)
-    origem_estado = Column(String(250), nullable=False)
-    destino_cidade = Column(String(250), nullable=False)
-    destino_estado = Column(String(250), nullable=False)
-    data = Column(Date, nullable=False)
-    hora = Column(String(10))
