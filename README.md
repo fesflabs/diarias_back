@@ -43,13 +43,13 @@ Sistema de cálculo de diárias.
      MAIL_FROM=seuemail@email.com
      MAIL_PASSWORD=Senha do email
      JWT_SECRET=Token de segurança
-     
      ```
 
 5. **Criação de Token de Segurança**:
    - Para gerar um token de segurança, execute o seguinte comando:
      ```bash
-     python -c "import secrets; print(secrets.token_urlsafe(32))"
+     python -c "import secrets;
+     print(secrets.token_urlsafe(32))"
      
      ```
 
@@ -82,7 +82,7 @@ Sistema de cálculo de diárias.
   ```bash
   curl -X POST -H "Content-Type: application/json" -d '{"email": "usuario@fesfsus.ba.gov.br"}' http://localhost:8000/enviar-link-acesso
   
-`
+
 **Respostas**:
 
 -   202 OK: `{"message": "Email enviado com sucesso."}`
