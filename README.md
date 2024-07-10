@@ -12,219 +12,78 @@ Sistema de cálculo de diárias.
 
   
 
-## Pré-requisitos
 
--  `Python 3.12.1`
-
--  `PostgreSQL`
-
-  
 
 ## Como começar?
 
+1. **Clonar repositório**: Clone o projeto diarias para sua máquina local.
+
+2. **Configurar Ambiente Virtual (Opcional para DevOps)**:
+   - Crie e ative um ambiente virtual:
+     ```bash
+     python -m venv venv
+     .\venv\Scripts\activate  # Windows
+     ```
+   
+3. **Instalar Dependências**:
+   - Instale as dependências necessárias:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+4. **Configuração do Ambiente .env**:
+   - Crie um arquivo `.env` na raiz do projeto e configure as variáveis de ambiente necessárias:
+     ```plaintext
+     DATABASE_URL=postgresql://user:password@localhost/mydatabase
+     DB_NOME=Nome do banco
+     DB_USER=Usuario
+     DB_SENHA=Senha do banco
+     DB_HOST=Host
+     MAIL_USER=seuemail@email.com
+     MAIL_FROM=seuemail@email.com
+     MAIL_PASSWORD=Senha do email
+     JWT_SECRET=Token de segurança
+     
+     ```
+
+5. **Criação de Token de Segurança**:
+   - Para gerar um token de segurança, execute o seguinte comando:
+     ```bash
+     python -c "import secrets; print(secrets.token_urlsafe(32))"
+     
+     ```
+
+6. **Banco de Dados e Migrações**:
+   - Certifique-se de que as variáveis de ambiente relacionadas ao banco de dados estejam configuradas corretamente no arquivo `.env`.
+   - Verifique as migrações existentes no diretório `alembic/versions` com:
+     ```bash
+     alembic current
+     ```
+   - Para aplicar as migrações e atualizar o banco de dados, use:
+     ```bash
+     alembic upgrade head
+     ```
+
+## Endpoints da API - V1
+
+### Estrutura de Diretórios
+
+- `api/v1/endpoints/`
+- `funcionario.py`: Endpoint para enviar e-mail de acesso ao sistema.
+
+### Exemplo de Uso do Endpoint
+
+#### `/enviar-link-acesso`
+
+- **Método HTTP**: POST
+- **Parâmetros**:
+  - `email`: O e-mail do funcionário com o domínio `fesfsus.ba.gov.br`.
+- **Exemplo de Requisição**:
+  ```bash
+  curl -X POST -H "Content-Type: application/json" -d '{"email": "usuario@fesfsus.ba.gov.br"}' http://localhost:8000/enviar-link-acesso
   
-
-1. Clonar repositorio: Clone o diarias em sua maquina local.
-
-  
-
-2. Crie e ative um ambiente virtual: `python -m venv venv` e `.\venv\Scripts\activate`
-
-  
-
-3. Instale as dependências: `pip install -r requirements.txt`
-
-  
-
-#### Configuração de ambiente .env
-
-  
-
-O arquivo `.env` é usado para para Manipular dados Sensiveis como Senhas, tokens de acesso e credenciais de banco de dados, no arquivo deve configurar as variáveis de ambiente necessárias para o projeto.
-
-  
-
-Certifique-se de instalar a biblioteca python-dotenv antes de usar.
-
-  
-
--  ```pip install python-dotenv```
-
-  
-
-### Criação de token de segurança
-
-  
-
-1. Abra um terminal.
-
-  
-
-2. Execute o seguinte comando:
-
-  
-
-``` python
-
-  
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-
-  
-```
-
-  
-#### Como Criar o Arquivo .env
-
-  
-
-Para criar o arquivo `.env`, verifique o arquivo .ENV-EXEMPLO, e siga estas etapas:
-
-  
-
-1. Crie um novo arquivo chamado `.env` no diretório raiz do projeto.
-
-  
-
-2. Adicione as variáveis de ambiente necessárias no formato `NOME_DA_VARIAVEL=valor`.
-
-  
-
-Exemplo:
-
-  
-
--  `MAIL_USERNAME = 'email@email.com.br'`
-
-
-#### Variáveis de Ambiente
-
-  
-
--  `DB_NOME=`: Nome do banco
-
-  
-
--  `DB_USER=` : Usuario
-
-  
-
--  `DB_SENHA=`Senha do banco
-
-  
-
--  `DB_HOST=`: Host
-
-
-- `DATABASE_URL=`postgresql://user:password@localhost/mydatabase
-  
-
--  `MAIL_USERNAME =`: seuemail@email.com
-
-  
-
--  `MAIL_FROM =`: seuemail@email.com
-
-  
-
--  `MAIL_PASSWORD`: Senha do email
-
-  
-
--  `JWT_SECRET `: token de segurança
-
-  
-
-#### Banco de Dados
-
-  
-
-1. Configure as variáveis de ambiente.
-
-- Atente-se a criação da variável DATABASE_URL no arquivo .env.
-
-2. Verificar as migrações existentes.
-
-- Verifique se há migrações existentes no diretório `alembic/versions`. O próximo programador precisará aplicar essas migrações para criar as tabelas.
-
-
-3. Aplicar migrações
-
-- Para aplicar todas as migrações e criar as tabelas no banco de dados deve executar o comando:
-
-``` python
- 
-
-alembic upgrade head
-
-``` 
-  
-
-## Rotas da API - V1
-
-  
-
-Este diretório contém os endpoints da API para a versão 1.
-
-  
-  
-
-## Estrutura de Diretórios
-
-  
-
--  `api/v1/endpoints/`
-
-  
-
--  `funcionario.py`: Endpoint para enviar e-mail de acesso ao sistema.
-
-
-## Endpoints
-
-  
-
-```python
-  
-
-/enviar-link-acesso
-
-  
-```
-
-  
-
-Quando um cliente faz uma solicitação POST para este endpoint, o servidor verifica se o e-mail fornecido corresponde ao domínio FESF. Se um e-mail corresponder, o link de acesso será enviado.
-
-  
-  
-
--  **Parâmetros:**
-
-  
-
-- e-mail : O e-mail do funcionário com o domínio `fesfsus.ba.gov.br`.
-
-  
-
-### Método HTTP
-
-  
-  
-
--  **POST**: Usado para enviar um link de acesso por e-mail para usuários autorizados.
-
-  
-
-Respostas:
-
-  
-
-### Respostas
-
-  
-
-- 202 OK: `{"message": "Email enviado com sucesso."}`.
-
-  
-
-- 404 Not Found: `{"detail": "Apenas emails com o domínio @fesfsus.ba.gov.br são autorizados a receber o link de acesso."}`.
+`
+**Respostas**:
+
+-   202 OK: `{"message": "Email enviado com sucesso."}`
+-   404 Not Found: `{"detail": "Apenas emails com o domínio @fesfsus.ba.gov.br são autorizados a receber o link de acesso."}`
