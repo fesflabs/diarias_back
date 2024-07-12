@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import BaseModel, EmailStr
-
 from core.deps import get_session
 from core.auth import criar_token_acesso_formulario
-
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.configs import config
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+link_acesso_base = os.getenv('LINK_ACESSO')
 
 router = APIRouter()
 
@@ -29,7 +31,7 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
     token = criar_token_acesso_formulario(sub=email)
 
     # Construir o link de acesso com o token JWT
-    link_acesso = f"http://example.com/autenticacao?token={token}"
+    link_acesso = f"http://{link_acesso_base}?token={token}"
 
     # Preparar o corpo do email
     message = MessageSchema(
