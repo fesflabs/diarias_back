@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from api.v1.endpoints import funcionario
+from api.v1.endpoints import funcionario, diaria
 
 api_router = APIRouter()
 
 api_router.include_router(funcionario.router, prefix='/funcionario', tags= ['funcionario'])
+api_router.include_router(diaria.router, prefix='/diaria', tags=['diaria'])
