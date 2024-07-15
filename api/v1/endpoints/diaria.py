@@ -4,6 +4,7 @@ from typing import List
 from core.deps import get_session
 from schema.diaria_schema import Trecho
 from utils.diarias_functions import calcular_valores, verificar_duracao_total
+from utils.sd_functions import gerar_numero_unico
 
 router = APIRouter()
 
@@ -14,10 +15,13 @@ async def calcular_diarias(trechos: List[Trecho], db: AsyncSession = Depends(get
     
     verificar_duracao_total(trechos)
     diarias_completas, diarias_simples, valor_total = await calcular_valores(trechos, db)
+    
+    # Gerar o número único SD
+    sd = await gerar_numero_unico(db)
 
     return {
         "diarias_completas": diarias_completas,
         "diarias_simples": diarias_simples,
         "valor_total": valor_total,
-        "sd": '12345/2024'
+        "sd": sd
     }

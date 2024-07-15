@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models.models import Cidade
 from fastapi import HTTPException
-from utils.diarias_functions import *
 
 cidades_sem_diaria = [
     "Lauro de Freitas", "Simoes Filho", "Camacari", "Dias dAvila",

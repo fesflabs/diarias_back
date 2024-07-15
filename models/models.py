@@ -15,7 +15,7 @@ class Funcionario(settings.DBBaseModel):
     data_nasc = Column(Date)
     rg = Column(String(12))
     telefone = Column(String(12))
-    cod_banco = Column(String(3), ForeignKey('registroBanco.cod_banco', name='fk_cod_banco'))
+    cod_banco = Column(String(3), ForeignKey('registro_banco.cod_banco', name='fk_cod_banco'))
     agencia = Column(String(6))
     conta_corrente = Column(String(12))
     matricula = Column(String(20))
@@ -28,7 +28,7 @@ class Funcionario(settings.DBBaseModel):
 
 # Tabela de registro de banco
 class RegistroBanco(settings.DBBaseModel):
-    __tablename__ = 'registroBanco'
+    __tablename__ = 'registro_banco'
 
     cod_banco = Column(String(3), primary_key=True, unique=True, nullable=False)
     num_banco = Column(String(3), nullable=True)
@@ -55,3 +55,9 @@ class Cidade(settings.DBBaseModel):
     cidade = Column(String(250), nullable=False)
 
     rel_estado = relationship('Estado', back_populates='rel_cidade')
+
+# Tabela de SD
+class NumeroSd(settings.DBBaseModel):
+    __tablename__ = 'numero_sd'
+    
+    ultimo_numero = Column(Integer, primary_key=True, default=0)
