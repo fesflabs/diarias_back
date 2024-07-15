@@ -39,7 +39,7 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
         recipients=[email],
         body=f"Olá,<br><br>"
              f"Você solicitou um link de acesso ao Sistema de Diárias. Clique no link abaixo para acessar:<br>"
-             f"<a href='{link_acesso}'>{link_acesso}</a>",
+             f"<a href='{link_acesso}'>Clique aqui para acessar o sistema</a>",
         subtype='html'
     )
 
