@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from core.deps import get_session
+from core.deps import get_session, validate_form_token
 from schema.diaria_schema import Trecho
 from utils.diarias_functions import calcular_valores, verificar_duracao_total
 from utils.sd_functions import gerar_numero_unico
@@ -9,7 +9,12 @@ from utils.sd_functions import gerar_numero_unico
 router = APIRouter()
 
 @router.post("/calcular")
-async def calcular_diarias(trechos: List[Trecho], db: AsyncSession = Depends(get_session)):
+async def calcular_diarias(
+    trechos: List[Trecho],
+    db: AsyncSession = Depends(get_session),
+    user_id: str = Depends(validate_form_token)
+    ):
+    
     if not trechos:
         raise HTTPException(status_code=400, detail="Lista de trechos está vazia.")
     
@@ -23,5 +28,6 @@ async def calcular_diarias(trechos: List[Trecho], db: AsyncSession = Depends(get
         "diarias_completas": diarias_completas,
         "diarias_simples": diarias_simples,
         "valor_total": valor_total,
-        "sd": sd
+        "sd": sd,
+        "user_id": user_id
     }
