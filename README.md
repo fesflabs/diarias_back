@@ -39,6 +39,7 @@ Sistema de cálculo de diárias.
      DB_USER=Usuario
      DB_SENHA=Senha do banco
      DB_HOST=Host
+     LINK_ACESSO=Link de acesso ao frontend
      MAIL_USER=seuemail@email.com
      MAIL_FROM=seuemail@email.com
      MAIL_PASSWORD=Senha do email
