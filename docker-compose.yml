@@ -15,7 +15,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
-      - my_network  
+      - my_network
 
   python-back:
     build: 
@@ -32,6 +32,8 @@ services:
       - postgres
     env_file:
       - .env
+    restart: always
+    
   frontend:
     build:
       context: /home/jcurvelo/diarias-front
@@ -43,6 +45,8 @@ services:
       - my_network
     env_file:
       - .env
+    restart: always
+
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -54,11 +58,13 @@ services:
       - frontend
     networks:
       - my_network
+    restart: always
+
   prometheus:
     image: prom/prometheus:v2.38.0
     container_name: prometheus
     ports:
-      - "9092:9090"
+      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
@@ -74,14 +80,16 @@ services:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     networks:
       - my_network
+    restart: always
 
   node-exporter:
     image: prom/node-exporter:v1.3.1
     container_name: node-exporter
     ports:
-      - "9101:9100"
+      - "9100:9100"
     networks:
       - my_network
+    restart: always
 
   portainer_agent:
     container_name: portainer_agent
