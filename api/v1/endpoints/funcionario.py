@@ -1,13 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema
+
 from pydantic import BaseModel, EmailStr
+
 from core.deps import get_session
 from core.auth import criar_token_acesso_formulario
-from sqlalchemy.ext.asyncio import AsyncSession
 from core.configs import config
+
+from sqlalchemy.orm import selectinload
+from sqlalchemy import func, String
+from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 import os
+
+from typing import List, Optional
+
+from schema.funcionario_schema import FuncionarioSchemaBase
+from models.models import Funcionario
+
 
 load_dotenv()
 link_acesso_base = os.getenv('LINK_ACESSO')
@@ -48,3 +60,30 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
     await fm.send_message(message)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Email enviado com sucesso."})
+
+
+@router.get('/buscar/', response_model=FuncionarioSchemaBase)
+async def get_funcionario(cpf: Optional[str] = Query(None), 
+                          db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(Funcionario)
+
+        if cpf:
+            query = query.filter(func.cast(Funcionario.cpf, String) == cpf)
+
+        result = await session.execute(query)
+        funcionarios = result.scalars().all()
+
+        if not funcionarios:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Funcionário com CPF {cpf} não encontrado"
+            )
+
+        funcionario = funcionarios[0]
+        funcionario_dict = {
+            **funcionario.__dict__,
+            'data_nasc': funcionario.data_nasc.strftime('%d/%m/%Y')
+        }
+
+        return funcionario_dict
