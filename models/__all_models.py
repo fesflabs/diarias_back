@@ -1,1 +1,1 @@
-from models.models import Funcionario, RegistroBanco, Estado, Cidade, NumeroSd
+from models.models import Funcionario, Estado, Cidade, NumeroSd

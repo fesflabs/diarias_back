@@ -11,7 +11,7 @@ import os
 from dotenv import load_dotenv
 from alembic import context
 
-from models.models import Funcionario, RegistroBanco, Estado, Cidade
+from models.models import Funcionario, Estado, Cidade
 
 load_dotenv()
 
