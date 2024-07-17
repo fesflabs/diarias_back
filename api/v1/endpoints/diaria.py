@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from core.deps import get_session, validate_form_token
-from schema.trecho_schema import Trecho
+from schema.diaria_schema import Trecho
 from utils.diarias_functions import calcular_valores, verificar_duracao_total
 from utils.sd_functions import gerar_numero_unico
 

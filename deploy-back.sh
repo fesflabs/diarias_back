@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Caminho para a pasta do repositório Git
-REPO_DIR="/home/jcurvelo/diarias-back"
+REPO_DIR="/home/jcurvelo/diarias"
 
 # Caminho para a pasta do docker-compose.yml
 DOCKER_COMPOSE_DIR="/home/jcurvelo/diarias"
