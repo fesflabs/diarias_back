@@ -26,6 +26,9 @@ link_acesso_base = os.getenv('LINK_ACESSO')
 
 router = APIRouter()
 
+class CPFSchema(BaseModel):
+    cpf: str
+
 class EmailSchema(BaseModel):
     email: EmailStr
 
@@ -63,13 +66,12 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
 
 
 @router.get('/buscar/', response_model=FuncionarioSchemaBase)
-async def get_funcionario(cpf: Optional[str] = Query(None), 
+async def get_funcionario(cpf_schema: CPFSchema, 
                           db: AsyncSession = Depends(get_session)):
-    async with db as session:
-        query = select(Funcionario)
+    cpf = cpf_schema.cpf
 
-        if cpf:
-            query = query.filter(func.cast(Funcionario.cpf, String) == cpf)
+    async with db as session:
+        query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
 
         result = await session.execute(query)
         funcionarios = result.scalars().all()

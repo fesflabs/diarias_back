@@ -22,11 +22,10 @@ class FuncionarioSchemaBase(BaseModel):
     centro_custo: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-    @validator('cpf')
-    def validate_and_format_cpf(cls, cpf):
-        # Replace FuncionarioFormatCpf with your actual validation logic
-        if not FuncionarioFormatCpf(cpf=cpf).validateCpf(key="cpf", cpf=cpf):
-            raise ValueError('CPF inválido')
-        return cpf
+
+class FuncionarioSchemaUp(FuncionarioSchemaBase):
+    cod_banco: Optional[str]
+    nome_banco: Optional[str]
+    agencia: Optional[str]
