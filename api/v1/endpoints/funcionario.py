@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema
 
@@ -8,17 +8,16 @@ from core.deps import get_session
 from core.auth import criar_token_acesso_formulario
 from core.configs import config
 
-from sqlalchemy.orm import selectinload
 from sqlalchemy import func, String
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 import os
 
-from typing import List, Optional
-
 from schema.funcionario_schema import FuncionarioSchemaBase
 from models.models import Funcionario
+
+from datetime import datetime
 
 
 load_dotenv()
@@ -84,8 +83,12 @@ async def get_funcionario(cpf_schema: CPFSchema,
 
         funcionario = funcionarios[0]
         funcionario_dict = {
-            **funcionario.__dict__,
-            'data_nasc': funcionario.data_nasc.strftime('%d/%m/%Y')
-        }
+        **funcionario.__dict__,
+        'data_nasc': (
+            funcionario.data_nasc.strftime('%d/%m/%Y') 
+            if isinstance(funcionario.data_nasc, datetime) 
+            else None
+        )
+    }
 
         return funcionario_dict
