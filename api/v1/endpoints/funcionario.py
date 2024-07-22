@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema
 
-from core.deps import get_session
+from core.deps import get_session, validate_form_token
 from core.auth import criar_token_acesso_formulario
 from core.configs import config
 
@@ -61,7 +61,8 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
 
 @router.get('/buscar/', response_model=FuncionarioSchemaBase)
 async def get_funcionario(cpf_schema: FuncionarioCPF, 
-                          db: AsyncSession = Depends(get_session)):
+                          db: AsyncSession = Depends(get_session),
+                          user_id: str = Depends(validate_form_token)):
     cpf = cpf_schema.cpf
     async with db as session:
         query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
@@ -86,8 +87,12 @@ async def get_funcionario(cpf_schema: FuncionarioCPF,
         return funcionario_dict
     
 
-@router.put('/atualizar/{cpf}', response_model=FuncionarioSchemaUp)
-async def update_funcionario(cpf: str, update_data: FuncionarioSchemaUp, db: AsyncSession = Depends(get_session)):
+@router.put('/atualizar/', response_model=FuncionarioSchemaUp)
+async def update_funcionario(update_data: FuncionarioSchemaUp,
+                             db: AsyncSession = Depends(get_session),
+                          user_id: str = Depends(validate_form_token)):
+    cpf = update_data.cpf
+
     async with db as session:
         query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
         result = await session.execute(query)
@@ -112,6 +117,7 @@ async def update_funcionario(cpf: str, update_data: FuncionarioSchemaUp, db: Asy
         await session.refresh(funcionario)
 
         return {
+            "cpf": funcionario.cpf,
             "cod_banco": funcionario.cod_banco,
             "nome_banco": funcionario.nome_banco,
             "agencia": funcionario.agencia,
