@@ -25,6 +25,7 @@ class FuncionarioSchemaBase(BaseModel):
 
 
 class FuncionarioSchemaUp(BaseModel):
+    cpf: str = Field(..., min_length=11, max_length=11)
     cod_banco: Optional[str] = None
     nome_banco: Optional[str] = None
     agencia: Optional[str] = None
