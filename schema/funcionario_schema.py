@@ -1,6 +1,6 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from utils.classes import FuncionarioFormatCpf
+from datetime import date
 
 
 class FuncionarioSchemaBase(BaseModel):
@@ -8,7 +8,7 @@ class FuncionarioSchemaBase(BaseModel):
     nome: Optional[str]
     endereco: Optional[str]
     estado: Optional[str]
-    data_nasc: Optional[str]
+    data_nasc: Optional[str] 
     rg: Optional[str]
     telefone: Optional[str]
     cod_banco: Optional[str]
@@ -25,7 +25,16 @@ class FuncionarioSchemaBase(BaseModel):
         from_attributes = True
 
 
-class FuncionarioSchemaUp(FuncionarioSchemaBase):
-    cod_banco: Optional[str]
-    nome_banco: Optional[str]
-    agencia: Optional[str]
+class FuncionarioSchemaUp(BaseModel):
+    cod_banco: Optional[str] = None
+    nome_banco: Optional[str] = None
+    agencia: Optional[str] = None
+    conta_corrente: Optional[str] = None
+
+
+class CPFSchema(BaseModel):
+    cpf: str = Field(..., min_length=11, max_length=11)
+
+
+class EmailSchema(BaseModel):
+    email: EmailStr
