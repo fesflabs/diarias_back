@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models.models import Cidade
 from fastapi import HTTPException
+import re
 
 # Valores das diárias em um dicionário
 VALORES_DIARIAS = {
@@ -92,3 +93,11 @@ def verificar_duracao_total(trechos):
     if total_dias > 8:
         raise HTTPException(
             status_code=400, detail="A duração total dos trechos não pode exceder 8 dias.")
+
+
+def validar_data(data: str) -> bool:
+    return bool(re.match(r"\d{4}-\d{2}-\d{2}", data))
+
+
+def validar_hora(hora: str) -> bool:
+    return bool(re.match(r"\d{2}:\d{2}", hora))
