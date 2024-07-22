@@ -2,8 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema
 
-from pydantic import BaseModel, EmailStr
-
 from core.deps import get_session
 from core.auth import criar_token_acesso_formulario
 from core.configs import config
@@ -14,9 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 import os
 
-from schema.funcionario_schema import FuncionarioSchemaBase, CPFSchema, EmailSchema, FuncionarioSchemaUp
+from schema.funcionario_schema import FuncionarioSchemaBase, EmailSchema, FuncionarioSchemaUp
 from models.models import Funcionario
-from utils.classes import FuncionarioFormatCpf
+from utils.classes import FuncionarioCPF
 
 from datetime import datetime
 
@@ -62,22 +60,13 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
 
 
 @router.get('/buscar/', response_model=FuncionarioSchemaBase)
-async def get_funcionario(cpf_schema: CPFSchema, db: AsyncSession = Depends(get_session)):
+async def get_funcionario(cpf_schema: FuncionarioCPF, 
+                          db: AsyncSession = Depends(get_session)):
     cpf = cpf_schema.cpf
-
-    try:
-        valid_cpf = FuncionarioFormatCpf(cpf=cpf).validateCpf(None, cpf)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-
     async with db as session:
         query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
         result = await session.execute(query)
         funcionarios = result.scalars().all()
-
         if not funcionarios:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -85,17 +74,17 @@ async def get_funcionario(cpf_schema: CPFSchema, db: AsyncSession = Depends(get_
             )
 
         funcionario = funcionarios[0]
+
         funcionario_dict = {
+
             **funcionario.__dict__,
-            'data_nasc': (
-                funcionario.data_nasc.strftime('%d/%m/%Y') 
-                if isinstance(funcionario.data_nasc, datetime) 
-                else None
-            )
+
+            'data_nasc': funcionario.data_nasc.strftime('%d/%m/%Y')
+
         }
 
         return funcionario_dict
-
+    
 
 @router.put('/atualizar/{cpf}', response_model=FuncionarioSchemaUp)
 async def update_funcionario(cpf: str, update_data: FuncionarioSchemaUp, db: AsyncSession = Depends(get_session)):

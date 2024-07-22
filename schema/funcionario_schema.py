@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from datetime import date
 
 
 class FuncionarioSchemaBase(BaseModel):
@@ -30,11 +29,7 @@ class FuncionarioSchemaUp(BaseModel):
     nome_banco: Optional[str] = None
     agencia: Optional[str] = None
     conta_corrente: Optional[str] = None
-
-
-class CPFSchema(BaseModel):
-    cpf: str = Field(..., min_length=11, max_length=11)
-
+    
 
 class EmailSchema(BaseModel):
     email: EmailStr

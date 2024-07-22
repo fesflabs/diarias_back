@@ -1,29 +1,15 @@
-from pydantic import BaseModel
-from sqlalchemy.orm import validates
+from pydantic import BaseModel, validator,Field
+from validate_docbr import CPF
 import re
 
-def validar_cpf(cpf: str) -> bool:
-    cpf = re.sub(r'\D', '', cpf)
-    
-    if len(cpf) != 11 or cpf == cpf[0] * 11:
-        return False
+class FuncionarioCPF(BaseModel):
+    cpf: str = Field(..., min_length=11, max_length=11)
 
-    def calcular_digito(dados: str) -> int:
-        soma = sum(int(dados[i]) * (10 - i) for i in range(9))
-        resto = (soma * 10) % 11
-        return resto if resto < 10 else 0
-
-    digito1 = calcular_digito(cpf[:9])
-    digito2 = calcular_digito(cpf[:9] + str(digito1))
-    
-    return cpf[-2:] == f"{digito1}{digito2}"
-
-class FuncionarioFormatCpf(BaseModel):
-    cpf: str
-
-    @validates('cpf')
-    def validateCpf(self, key, cpf):
+    @validator('cpf')
+    def validar_cpf(cls, cpf: str) -> str:
         cpf_numerico = re.sub(r'\D', '', cpf)
-        if not validar_cpf(cpf_numerico):
-            raise ValueError("CPF inválido")
-        return cpf_numerico
+        cpf_validator = CPF()
+        if cpf_validator.validate(cpf_numerico):
+            return cpf_numerico
+        else:
+            raise ValueError('CPF inválido')  

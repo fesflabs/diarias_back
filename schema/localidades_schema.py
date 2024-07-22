@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class EstadoResponse(BaseModel):
@@ -6,7 +6,7 @@ class EstadoResponse(BaseModel):
     estado: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CodEstadoRequest(BaseModel):
@@ -17,4 +17,4 @@ class CidadeNomeResponse(BaseModel):
     cidade: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
