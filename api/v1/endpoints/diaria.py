@@ -43,11 +43,11 @@ async def calcular_diarias(
                 status_code=400, detail="Estados de origem e destino são obrigatórios."
             )
 
-    verificar_duracao_total(trechos)
     diarias_completas, diarias_simples, valor_total = await calcular_valores(trechos, db)
 
     match tipo_sd:
         case "solicitação":
+            verificar_duracao_total(trechos)
             return {
                 "diarias_completas": diarias_completas,
                 "diarias_simples": diarias_simples,
@@ -55,6 +55,7 @@ async def calcular_diarias(
                 "user_id": user_id
             }
         case "complementação":
+            # Para complementação não tem limite de dias
             if not codigo_sd or valor_sd is None:
                 raise HTTPException(
                     status_code=400, detail="Campos 'codigo_sd' e 'valor_sd' são obrigatórios para complementação."
@@ -77,6 +78,7 @@ async def calcular_diarias(
                 "user_id": user_id
             }
         case "devolução":
+            verificar_duracao_total(trechos)
             if not codigo_sd or valor_sd is None:
                 raise HTTPException(
                     status_code=400, detail="Campos 'codigo_sd' e 'valor_sd' são obrigatórios para devolução."
