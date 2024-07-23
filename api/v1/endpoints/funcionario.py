@@ -16,6 +16,8 @@ from schema.funcionario_schema import FuncionarioSchemaBase, EmailSchema, Funcio
 from models.models import Funcionario
 from utils.classes import FuncionarioCPF
 
+from datetime import datetime
+
 
 load_dotenv()
 link_acesso_base = os.getenv('LINK_ACESSO')
@@ -57,9 +59,66 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Email enviado com sucesso."})
 
 
+@router.post('/criar', response_model=FuncionarioSchemaBase)
+async def post_funcionario(funcionario: FuncionarioSchemaBase,
+                           db: AsyncSession = Depends(get_session),
+                           user_email: str = Depends(validate_form_token)):
+    if user_email != 'dcti@fesfsus.ba.gov.br':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Acesso negado')
+    
+    try:
+        FuncionarioCPF(cpf=funcionario.cpf)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    
+    async with db as session:
+        query = select(Funcionario).filter(Funcionario.cpf == funcionario.cpf)
+        result = await session.execute(query)
+        existing_funcionario = result.scalar_one_or_none()
+        
+        if existing_funcionario:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Funcionário com CPF {funcionario.cpf} já existe"
+            )
+
+        funcionario_data = funcionario.dict()
+        if funcionario_data.get('data_nasc'):
+            try:
+                funcionario_data['data_nasc'] = datetime.strptime(funcionario_data['data_nasc'], "%d/%m/%Y").date()
+            except ValueError:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Formato de data inválido. Use o formato 'dd/mm/yyyy'."
+                )
+        
+        new_funcionario = Funcionario(**funcionario_data)
+        session.add(new_funcionario)
+        await session.commit()
+        await session.refresh(new_funcionario)
+
+        new_funcionario_dict = new_funcionario.__dict__
+        if new_funcionario_dict.get('data_nasc'):
+            new_funcionario_dict['data_nasc'] = new_funcionario_dict['data_nasc'].strftime('%d/%m/%Y')
+        
+        return new_funcionario_dict
+
+
 @router.get('/buscar/{cpf}', response_model=FuncionarioSchemaBase)
 async def get_funcionario(cpf: str,
                           db: AsyncSession = Depends(get_session)):
+    
+    try:
+        FuncionarioCPF(cpf=cpf)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
     async with db as session:
         query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
         result = await session.execute(query)
