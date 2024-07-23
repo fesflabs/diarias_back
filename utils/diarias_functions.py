@@ -84,7 +84,7 @@ async def calcular_valores(trechos, db):
             estado_destino = cidade_destino_info["estado"]
             habitantes = cidade_destino_info["habitantes"]
 
-            if estado_destino == CODIGO_BAHIA and trecho.cidade_destino in cidades_sem_diaria:
+            if estado_destino == CODIGO_BAHIA  and trecho.cidade_origem == 'Salvador' and trecho.cidade_destino in cidades_sem_diaria:
                 continue
 
             dias_viagem = (dt_retorno.date() - dt_saida.date()).days
