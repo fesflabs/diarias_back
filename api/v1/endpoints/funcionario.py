@@ -16,8 +16,6 @@ from schema.funcionario_schema import FuncionarioSchemaBase, EmailSchema, Funcio
 from models.models import Funcionario
 from utils.classes import FuncionarioCPF
 
-from datetime import datetime
-
 
 load_dotenv()
 link_acesso_base = os.getenv('LINK_ACESSO')
@@ -59,29 +57,22 @@ async def enviar_link_acesso(email_schema: EmailSchema, db: AsyncSession = Depen
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Email enviado com sucesso."})
 
 
-@router.get('/buscar/', response_model=FuncionarioSchemaBase)
-async def get_funcionario(cpf_schema: FuncionarioCPF, 
-                          db: AsyncSession = Depends(get_session),
-                          user_id: str = Depends(validate_form_token)):
-    cpf = cpf_schema.cpf
+@router.get('/buscar/{cpf}', response_model=FuncionarioSchemaBase)
+async def get_funcionario(cpf: str,
+                          db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(Funcionario).filter(func.cast(Funcionario.cpf, String) == cpf)
         result = await session.execute(query)
-        funcionarios = result.scalars().all()
-        if not funcionarios:
+        funcionario = result.scalars().first()
+        if not funcionario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Funcionário com CPF {cpf} não encontrado"
             )
 
-        funcionario = funcionarios[0]
-
         funcionario_dict = {
-
             **funcionario.__dict__,
-
-            'data_nasc': funcionario.data_nasc.strftime('%d/%m/%Y')
-
+            'data_nasc': funcionario.data_nasc.strftime('%d/%m/%Y') if funcionario.data_nasc else None
         }
 
         return funcionario_dict
