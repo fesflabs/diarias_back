@@ -50,3 +50,10 @@ class NumeroSd(settings.DBBaseModel):
     __tablename__ = 'numero_sd'
     
     ultimo_numero = Column(Integer, primary_key=True, default=0)
+    
+# Tabela de Bancos
+class Banco(settings.DBBaseModel):
+    __tablename__ = 'banco'
+    
+    cod_banco = Column(String(3), primary_key=True, nullable=False)
+    nome_banco = Column(String(250), nullable=False)
