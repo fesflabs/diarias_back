@@ -44,9 +44,9 @@ async def calcular_valores(trechos, db):
     # Verificar duração total dos trechos
     if len(trechos) > 1:
         dt_saida_primeiro_trecho = datetime.strptime(
-            f"{trechos[0].dt_saida} {trechos[0].hr_saida}", "%Y-%m-%d %H:%M")
+            f"{trechos[0].dt_saida} {trechos[0].hr_saida}", "%d/%m/%Y %H:%M")
         dt_retorno_ultimo_trecho = datetime.strptime(
-            f"{trechos[-1].dt_retorno} {trechos[-1].hr_retorno}", "%Y-%m-%d %H:%M")
+            f"{trechos[-1].dt_retorno} {trechos[-1].hr_retorno}", "%d/%m/%Y %H:%M")
         total_duracao = dt_retorno_ultimo_trecho - dt_saida_primeiro_trecho
 
         if total_duracao > timedelta(hours=8) and total_duracao.days < 1:
@@ -71,9 +71,9 @@ async def calcular_valores(trechos, db):
     # Calcular valores das diárias para cada trecho individualmente
     for i, trecho in enumerate(trechos):
         dt_saida = datetime.strptime(
-            f"{trecho.dt_saida} {trecho.hr_saida}", "%Y-%m-%d %H:%M")
+            f"{trecho.dt_saida} {trecho.hr_saida}", "%d/%m/%Y %H:%M")
         dt_retorno = datetime.strptime(
-            f"{trecho.dt_retorno} {trecho.hr_retorno}", "%Y-%m-%d %H:%M")
+            f"{trecho.dt_retorno} {trecho.hr_retorno}", "%d/%m/%Y %H:%M")
 
         cidade_destino_info = await get_cidade_info(trecho.cidade_destino, trecho.estado_destino, db)
         # Se tiver mais de um trecho, no ultimo trecho a cidade de origem passa a entrar em vigor no calculo e não a cidade de destino
@@ -84,7 +84,7 @@ async def calcular_valores(trechos, db):
             estado_destino = cidade_destino_info["estado"]
             habitantes = cidade_destino_info["habitantes"]
 
-            if estado_destino == CODIGO_BAHIA  and trecho.cidade_origem == 'Salvador' and trecho.cidade_destino in cidades_sem_diaria:
+            if estado_destino == CODIGO_BAHIA and trecho.cidade_origem == 'Salvador' and trecho.cidade_destino in cidades_sem_diaria:
                 continue
 
             dias_viagem = (dt_retorno.date() - dt_saida.date()).days
@@ -116,9 +116,9 @@ async def calcular_valores(trechos, db):
 
 def verificar_duracao_total(trechos):
     dt_saida_primeiro_trecho = datetime.strptime(
-        f"{trechos[0].dt_saida} {trechos[0].hr_saida}", "%Y-%m-%d %H:%M")
+        f"{trechos[0].dt_saida} {trechos[0].hr_saida}", "%d/%m/%Y %H:%M")
     dt_retorno_ultimo_trecho = datetime.strptime(
-        f"{trechos[-1].dt_retorno} {trechos[-1].hr_retorno}", "%Y-%m-%d %H:%M")
+        f"{trechos[-1].dt_retorno} {trechos[-1].hr_retorno}", "%d/%m/%Y %H:%M")
     total_dias = (dt_retorno_ultimo_trecho.date() -
                   dt_saida_primeiro_trecho.date()).days
 
@@ -128,7 +128,7 @@ def verificar_duracao_total(trechos):
 
 
 def validar_data(data: str) -> bool:
-    return bool(re.match(r"\d{4}-\d{2}-\d{2}", data))
+    return bool(re.match(r"\d{2}/\d{2}/\d{4}", data))
 
 
 def validar_hora(hora: str) -> bool:
