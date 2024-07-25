@@ -37,8 +37,10 @@ async def get_cidade_info(cidade_nome: str, estado: int, db: AsyncSession):
 
 
 async def calcular_valores(trechos, db):
-    diarias_completas = 0
-    diarias_simples = 0
+    quantidade_diarias_simples = 0
+    quantidade_diarias_completas = 0
+    valor_diarias_simples = 0
+    valor_diarias_completas = 0
     valor_total = 0
 
     # Verificar duração total dos trechos
@@ -50,23 +52,26 @@ async def calcular_valores(trechos, db):
         total_duracao = dt_retorno_ultimo_trecho - dt_saida_primeiro_trecho
 
         if total_duracao > timedelta(hours=8) and total_duracao.days < 1:
-            diarias_simples += 1
+            quantidade_diarias_simples += 1
             trecho = trechos[-1]
             cidade_destino_info = await get_cidade_info(trecho.cidade_origem, trecho.estado_origem, db)
             if cidade_destino_info:
                 estado_destino = cidade_destino_info["estado"]
                 habitantes = cidade_destino_info["habitantes"]
                 if estado_destino != CODIGO_BAHIA:
+                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
                     valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
                 else:
                     if habitantes < LIMITE_HABITANTES:
+                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_pequena"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_pequena"]
                     else:
+                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
             else:
                 raise HTTPException(status_code=404, detail=f"Cidade {
                                     trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
-            return diarias_completas, diarias_simples, valor_total
+            return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
     # Calcular valores das diárias para cada trecho individualmente
     for i, trecho in enumerate(trechos):
@@ -89,29 +94,35 @@ async def calcular_valores(trechos, db):
 
             dias_viagem = (dt_retorno.date() - dt_saida.date()).days
             if dias_viagem > 0:
-                diarias_completas += dias_viagem
+                quantidade_diarias_completas += dias_viagem
                 for _ in range(dias_viagem):
                     if estado_destino != CODIGO_BAHIA:
+                        valor_diarias_completas += VALORES_DIARIAS["diaria_completa_fora_estado"]
                         valor_total += VALORES_DIARIAS["diaria_completa_fora_estado"]
                     else:
                         if habitantes < LIMITE_HABITANTES:
+                            valor_diarias_completas += VALORES_DIARIAS["diaria_completa_estado_pequena"]
                             valor_total += VALORES_DIARIAS["diaria_completa_estado_pequena"]
                         else:
+                            valor_diarias_completas += VALORES_DIARIAS["diaria_completa_estado_grande"]
                             valor_total += VALORES_DIARIAS["diaria_completa_estado_grande"]
             elif (dt_retorno - dt_saida) > timedelta(hours=8):
-                diarias_simples += 1
+                quantidade_diarias_simples += 1
                 if estado_destino != CODIGO_BAHIA:
+                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
                     valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
                 else:
                     if habitantes < LIMITE_HABITANTES:
+                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_pequena"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_pequena"]
                     else:
+                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
         else:
             raise HTTPException(status_code=404, detail=f"Cidade {
                                 trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
 
-    return diarias_completas, diarias_simples, valor_total
+    return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
 
 def verificar_duracao_total(trechos):

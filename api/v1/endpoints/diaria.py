@@ -43,14 +43,16 @@ async def calcular_diarias(
                 status_code=400, detail="Estados de origem e destino são obrigatórios."
             )
 
-    diarias_completas, diarias_simples, valor_total = await calcular_valores(trechos, db)
+    quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total = await calcular_valores(trechos, db)
 
     match tipo_sd:
         case "solicitação":
             verificar_duracao_total(trechos)
             return {
-                "diarias_completas": diarias_completas,
-                "diarias_simples": diarias_simples,
+                "quantidade_diarias_simples": quantidade_diarias_simples,
+                "quantidade_diarias_completas": quantidade_diarias_completas,
+                "valor_diarias_simples": round(valor_diarias_simples, 2),
+                "valor_diarias_completas": round(valor_diarias_completas, 2),
                 "valor_total": round(valor_total, 2),
                 "user_id": user_id
             }
@@ -70,8 +72,10 @@ async def calcular_diarias(
                 )
             valor_complementacao = valor_total - valor_sd
             return {
-                "diarias_completas": diarias_completas,
-                "diarias_simples": diarias_simples,
+                "quantidade_diarias_simples": quantidade_diarias_simples,
+                "quantidade_diarias_completas": quantidade_diarias_completas,
+                "valor_diarias_simples": round(valor_diarias_simples, 2),
+                "valor_diarias_completas": round(valor_diarias_completas, 2),
                 "valor_total": round(valor_total, 2),
                 "valor_sd": round(valor_sd, 2),
                 "valor_complementacao": round(valor_complementacao, 2),
@@ -93,8 +97,10 @@ async def calcular_diarias(
                 )
             valor_devolucao = valor_sd - valor_total
             return {
-                "diarias_completas": diarias_completas,
-                "diarias_simples": diarias_simples,
+                "quantidade_diarias_simples": quantidade_diarias_simples,
+                "quantidade_diarias_completas": quantidade_diarias_completas,
+                "valor_diarias_simples": round(valor_diarias_simples, 2),
+                "valor_diarias_completas": round(valor_diarias_completas, 2),
                 "valor_total": round(valor_total, 2),
                 "valor_sd": round(valor_sd, 2),
                 "valor_devolucao": round(valor_devolucao, 2),
