@@ -19,9 +19,9 @@ CODIGO_BAHIA = 29
 LIMITE_HABITANTES = 100000
 
 cidades_sem_diaria = [
-    "Lauro de Freitas", "Simoes Filho", "Camacari", "Dias dAvila",
-    "Mata de Sao Joao", "Vera Cruz", "Itaparica", "Candeias",
-    "Sao Francisco do Conde", "Madre de Deus", "Sao Sebastiao do Passe"
+    "Lauro de Freitas", "Simões Filho", "Camaçari", "Dias d'Ávila",
+    "Mata de São João", "Vera Cruz", "Itaparica", "Candeias",
+    "São Francisco do Conde", "Madre de Deus", "São Sebastião do Passé"
 ]
 
 
