@@ -30,7 +30,7 @@ class Settings(BaseSettings):
 
 
     # Configurações para geração de tokens JWT
-    JWT_SECRET: str = 'JWT_SECRET'
+    JWT_SECRET: str = jwt_token
     """
     import secrets
     token: str = secrets.token_urlsafe(32)

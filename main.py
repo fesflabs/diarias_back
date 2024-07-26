@@ -6,7 +6,7 @@ from api.v1.api import api_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = FastAPI(title='SCAE')
+app = FastAPI(title='diarias')
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 app.add_middleware(

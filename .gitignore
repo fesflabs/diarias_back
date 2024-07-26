@@ -13,3 +13,7 @@ venv.back
 venv/
 
 limpar_pycache
+
+#Certificados
+.Crt
+.Key
