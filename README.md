@@ -497,10 +497,12 @@ curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/js
 ````bash
 
 {
-    "diarias_completas": 2,
-    "diarias_simples": 1,
-    "valor_total": 300.00,
-    "user_id": "teste@fesfsus.ba.gov.br"
+  "quantidade_diarias_simples": 0,
+  "quantidade_diarias_completas": 1,
+  "valor_diarias_simples": 0,
+  "valor_diarias_completas": 270,
+  "valor_total": 270,
+  "user_id": "teste@fesfsus.ba.gov.br"
 }
 ````
 
