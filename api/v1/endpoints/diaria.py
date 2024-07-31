@@ -4,6 +4,7 @@ from core.deps import get_session, validate_form_token
 from schema.diaria_schema import Solicitacao, SDRequest
 from utils.diarias_functions import calcular_valores, verificar_duracao_total, validar_data, validar_hora
 from utils.sd_functions import gerar_numero_unico, gerar_data_hora_sd, validar_codigo_sd
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
@@ -26,6 +27,14 @@ async def calcular_diarias(
         )
 
     for trecho in trechos:
+        dt_hr_saida = datetime.strptime(
+            f"{trecho.dt_saida} {trecho.hr_saida}", "%d/%m/%Y %H:%M")
+        dt_hr_retorno = datetime.strptime(
+            f"{trecho.dt_retorno} {trecho.hr_retorno}", "%d/%m/%Y %H:%M")
+        if dt_hr_saida > dt_hr_retorno:
+            raise HTTPException(
+                status_code=400, detail=f"A data/hora de saída não pode ser maior que a data/hora de retorno: {trecho.dt_saida} {trecho.hr_saida} - {trecho.dt_retorno} {trecho.hr_retorno} - {trecho.cidade_origem}/{trecho.cidade_destino}"
+            )
         if not validar_data(trecho.dt_saida) or not validar_data(trecho.dt_retorno):
             raise HTTPException(
                 status_code=400, detail=f"Formato de data inválido em um dos trechos: {trecho}"
@@ -64,7 +73,7 @@ async def calcular_diarias(
                 )
             if valor_sd >= valor_total:
                 raise HTTPException(
-                    status_code=400, detail="O valor_sd deve ser menor que o valor_total para complementação."
+                    status_code=400, detail="O valor da solicitação deve ser menor que o valor total para complementação."
                 )
             if not validar_codigo_sd(codigo_sd):
                 raise HTTPException(
@@ -89,7 +98,7 @@ async def calcular_diarias(
                 )
             if valor_sd <= valor_total:
                 raise HTTPException(
-                    status_code=400, detail="O valor_sd deve ser maior que o valor_total para devolução."
+                    status_code=400, detail="O valor da solicitaçã deve ser maior que o valor total para devolução."
                 )
             if not validar_codigo_sd(codigo_sd):
                 raise HTTPException(
