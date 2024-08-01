@@ -15,5 +15,5 @@ venv/
 limpar_pycache
 
 #Certificados
-.Crt
-.Key
+.crt
+.key
