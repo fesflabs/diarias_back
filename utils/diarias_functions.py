@@ -79,6 +79,8 @@ async def calcular_valores(trechos, db):
             f"{trecho.dt_saida} {trecho.hr_saida}", "%d/%m/%Y %H:%M")
         dt_retorno = datetime.strptime(
             f"{trecho.dt_retorno} {trecho.hr_retorno}", "%d/%m/%Y %H:%M")
+        dt_retorno_ultimo_trecho = datetime.strptime(
+            f"{trechos[-1].dt_retorno}", "%d/%m/%Y")
 
         cidade_destino_info = await get_cidade_info(trecho.cidade_destino, trecho.estado_destino, db)
         # Se tiver mais de um trecho, no ultimo trecho a cidade de origem passa a entrar em vigor no calculo e não a cidade de destino
@@ -107,6 +109,9 @@ async def calcular_valores(trechos, db):
                             valor_diarias_completas += VALORES_DIARIAS["diaria_completa_estado_grande"]
                             valor_total += VALORES_DIARIAS["diaria_completa_estado_grande"]
             elif (dt_retorno - dt_saida) > timedelta(hours=8):
+                # Não contabilizar diária simples caso tiver uma diária completa nos próximos trechos
+                if dt_retorno_ultimo_trecho > dt_retorno:
+                    continue
                 quantidade_diarias_simples += 1
                 if estado_destino != CODIGO_BAHIA:
                     valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
