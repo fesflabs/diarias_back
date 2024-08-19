@@ -32,6 +32,8 @@ services:
       - postgres
     env_file:
       - .env
+    environment:
+      - TZ=America/Bahia
     restart: always
     
   frontend:
@@ -45,6 +47,8 @@ services:
       - my_network
     env_file:
       - .env
+    environment:
+      - TZ=America/Bahia
     restart: always
 
   nginx:
