@@ -17,16 +17,7 @@ pipeline {
           }
         }
 
-        stage('deploy ') {
-          steps {
-            sh 'docker build -t diaras/duduomena .'
-          }
-        }
-
-      }
-    }
-
-    stage('Run ') {
+    stage('Deploy') {
       steps {
         sh 'docker compose up -d'
       }
