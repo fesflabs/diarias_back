@@ -1,6 +1,6 @@
 pipeline {
   agent {
-      label 'agente diarias'
+    label 'agente diarias'
   }
   stages {
     stage('CHECK') {
