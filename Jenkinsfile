@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('CHECK') {
       steps {
-        git(url: 'https://github.com/fesflabs/diarias', branch: 'main')
+        git(url: 'https://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@github.com/fesflabs/diarias', branch: 'main')
       }
     }
 
