@@ -23,7 +23,13 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+    stage('Limpando imagens e containers') {
+      steps {
+        sh 'docker system prune -a -f'
+      }
+    }
+
+    stage('build') {
       steps {
         sh 'docker-compose up -d'
       }
