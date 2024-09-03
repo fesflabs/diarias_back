@@ -1,7 +1,7 @@
 pipeline {
   agent {
     node {
-      label 'agente diarias'
+      label 'diarias dev'
     }
 
   }
