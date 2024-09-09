@@ -16,7 +16,7 @@ pipeline {
 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/Jenkinsfileprod_main.env'
+            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/Jenkinsfileprod_main/.env'
           }
         }
 
