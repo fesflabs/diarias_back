@@ -1,7 +1,7 @@
 pipeline {
   agent {
     node {
-      label 'diarias dev'
+      label 'diariaprod'
     }
 
   }
@@ -10,13 +10,13 @@ pipeline {
       parallel {
         stage('CHECK') {
           steps {
-            git(url: 'https://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@github.com/fesflabs/diarias', branch: 'develop')
+            git(url: 'https://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@github.com/fesflabs/diarias', branch: 'main')
           }
         }
 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_main/.env'
+            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/diarias_main/.env'
           }
         }
 
