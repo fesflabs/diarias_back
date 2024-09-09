@@ -16,7 +16,7 @@ pipeline {
 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/Diarais prod/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/.env'
           }
         }
 
