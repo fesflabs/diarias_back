@@ -8,7 +8,7 @@ env/
 ENV
 env.back/
 venv.back
-
+Jenkinsfile
 # Diretório de ambiente virtual
 venv/
 
