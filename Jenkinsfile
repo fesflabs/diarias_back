@@ -8,12 +8,19 @@ pipeline {
   stages {        
     stage('CHECK') {
       parallel {
-        stage('CHECK') {
+        stage('CHECK Back-end') {
           steps {
             git(url: 'https://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@github.com/fesflabs/diarias', branch: 'develop')
           }
         }
-
+    stage('CHECK Front-end') {
+      parallel {
+        stage('CHECK') {
+          steps {
+            git(url: 'https://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@github.com/fesflabs/diarias-front', branch: 'main')
+          }
+        }
+                
         stage('criar .env') {
           steps {
             sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/.env'
