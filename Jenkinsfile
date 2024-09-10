@@ -6,6 +6,11 @@ pipeline {
 
   }
   stages {
+    stage('Parando Containers'){
+      steps{
+        sh 'cd /home/jenkins/var && docker-compose down'
+      }
+    }
     stage('CHECK') {
       parallel {
         stage('CHECK') {
