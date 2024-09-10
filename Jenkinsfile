@@ -8,7 +8,7 @@ pipeline {
   stages {        
     stage('Parando Containers') {
       steps {
-        sh 'cd /home/jenkins/variaveis/diarias && docker-compose down -d'
+        sh 'cd /home/jenkins/variaveis/diarias && docker-compose down'
       }
     }
     stage('CHECK') {
