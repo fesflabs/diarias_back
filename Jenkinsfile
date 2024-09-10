@@ -6,11 +6,6 @@ pipeline {
 
   }
   stages {        
-    stage('Parando Containers') {
-      steps {
-        sh 'cd /home/jenkins/variaveis/diarias && docker-compose down'
-      }
-    }
     stage('CHECK') {
       parallel {
         stage('CHECK') {
@@ -24,7 +19,11 @@ pipeline {
             sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/.env'
           }
         }
-
+    stage('Parando Containers') {
+      steps {
+        sh 'docker-compose down'
+      }
+    }
       }
     }
 
