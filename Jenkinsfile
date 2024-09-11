@@ -22,14 +22,14 @@ pipeline {
     }
         stage('Acessa Back'){
       steps {
-        sh 'cd /home/jenkins/workspace/diarias_dev/diarias'
+        sh 'cd /home/jenkins/workspace/diarias_dev/diarias && docker-compose down'
       }
     }   
-    stage('Para Containers') {
-      steps{
-        sh 'docker-compose down'
-      }
-    }
+    // stage('Para Containers') {
+    //   steps{
+    //     sh 'docker-compose down'
+    //   }
+    // }
     stage('Cria repositório Front-end'){
       steps {
         sh 'cd diarias_front'
