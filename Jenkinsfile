@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Cria repositorio back'){
       steps {
-        sh 'mkdir diarias_back && cd diarias_back'
+        sh 'cd diarias_back'
       }
     }        
     stage('CLone Back') {
@@ -32,7 +32,7 @@ pipeline {
     }
     stage('Cria repositório Front-end'){
       steps {
-        sh 'mkdir diarias_front && cd diarias_front'
+        sh 'cd diarias_front'
       }
     }
     stage('Push front') {
