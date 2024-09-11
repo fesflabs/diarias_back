@@ -10,7 +10,7 @@ pipeline {
       parallel {
         stage('GIT PUSH') {
           steps {
-            sh 'git pull -b develop https://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@github.com/fesflabs/diarias'
+            sh 'git clone -f -b develop https://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@github.com/fesflabs/diarias'
           }
         }
         stage('criar .env') {
