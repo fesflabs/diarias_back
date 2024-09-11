@@ -5,7 +5,12 @@ pipeline {
     }
 
   }
-  stages {     
+  stages { 
+    stage ('Removendo repositorio'){
+      steps{
+        sh 'rm -rf diarias/'
+      }
+    }    
     stage('Clone Back') {
       parallel {
         stage('GIT PUSH') {
@@ -30,9 +35,14 @@ pipeline {
     //     sh 'docker-compose down'
     //   }
     // }
-    stage('Cria repositório Front-end'){
-      steps {
-        sh 'cd diarias_front'
+    // stage('Cria repositório Front-end'){
+    //   steps {
+    //     sh 'cd diarias_front'
+    //   }
+    // }
+    stage('Apagando front'){
+      steps{
+        sh 'rm -rf diarias-front'
       }
     }
     stage('Push front') {
