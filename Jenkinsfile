@@ -67,7 +67,7 @@ pipeline {
 
     stage('build') {
       steps {
-        sh 'cd docker-compose up -d'
+        sh 'cd diarias && docker-compose up -d'
       }
     }
 
