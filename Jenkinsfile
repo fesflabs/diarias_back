@@ -5,13 +5,8 @@ pipeline {
     }
 
   }
-  stages {
-    stage('Cria repositorio back'){
-      steps {
-        sh 'cd diarias_back'
-      }
-    }        
-    stage('CLone Back') {
+  stages {     
+    stage('Clone Back') {
       parallel {
         stage('GIT PUSH') {
           steps {
@@ -20,11 +15,16 @@ pipeline {
         }
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/diarias_back/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias_back/.env'
           }
         }
       }
     }
+        stage('Acessa Back'){
+      steps {
+        sh 'cd /home/jenkins/workspace/diarias_dev/diarias'
+      }
+    }   
     stage('Para Containers') {
       steps{
         sh 'docker-compose down'
@@ -44,7 +44,7 @@ pipeline {
         }
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/diarias_front/diarias-front/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias-front/.env'
           }
         }
       }
