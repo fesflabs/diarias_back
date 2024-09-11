@@ -15,7 +15,7 @@ pipeline {
         }
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias_back/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias/.env'
           }
         }
       }
