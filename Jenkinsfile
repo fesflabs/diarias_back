@@ -11,11 +11,11 @@ pipeline {
         sh 'mkdir diarias_back && cd diarias_back'
       }
     }        
-    stage('Check Back') {
+    stage('CLone Back') {
       parallel {
-        stage('CHECK') {
+        stage('GIT PUSH') {
           steps {
-            git(url: 'https://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@github.com/fesflabs/diarias', branch: 'develop')
+            sh 'git clone -b develop https://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@github.com/fesflabs/diarias'
           }
         }
         stage('criar .env') {
@@ -25,21 +25,26 @@ pipeline {
         }
       }
     }
+    stage('Para Containers') {
+      steps{
+        sh 'docker-compose down'
+      }
+    }
     stage('Cria repositório Front-end'){
       steps {
         sh 'mkdir diarias_front && cd diarias_front'
       }
     }
-    stage('Check Front') {
+    stage('Push front') {
       parallel {
-        stage('CHECK') {
+        stage('Clone Front ') {
           steps {
-            git(url: 'https://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@github.com/fesflabs/diarias-front', branch: 'main')
+            sh 'git clone -b main https://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@github.com/fesflabs/diarias-front'
           }
         }
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/diarias_front/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/"Diarais prod"/diarias_front/diarias-front/.env'
           }
         }
       }
@@ -52,7 +57,7 @@ pipeline {
 
     stage('build') {
       steps {
-        sh 'docker-compose up -d'
+        sh 'cd docker-compose up -d'
       }
     }
 
