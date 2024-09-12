@@ -71,6 +71,11 @@ pipeline {
         sh 'cd diarias && docker-compose up -d'
       }
     }
+    stage('Listando Container'){
+      steps{
+        sh 'docker ps -a'
+      }
+    }
 
   }
 }
