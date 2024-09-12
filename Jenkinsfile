@@ -31,17 +31,7 @@ pipeline {
         sh 'cd /home/jenkins/workspace/diarias_dev/diarias && docker-compose down'
       }
     }   
-    // stage('Para Containers') {
-    //   steps{
-    //     sh 'docker-compose down'
-    //   }
-    // }
-    // stage('Cria repositório Front-end'){
-    //   steps {
-    //     sh 'cd diarias_front'
-    //   }
-    // }
-    stage('Apagando front'){ //Apaga repositório front obsoleto
+    stage('Apagando front'){
       steps{
         sh 'rm -rf diarias-front'
       }
