@@ -5,38 +5,65 @@ pipeline {
     }
 
   }
-  stages {
-    stage('Parando Containers'){
+  stages { 
+    stage ('Removendo repositorio'){
       steps{
-        sh 'cd /home/jenkins/var && docker-compose down'
+        sh 'rm -rf diarias/'
       }
-    }
-    stage('CHECK') {
+    } 
+    //Clona back na branch Develop   
+    stage('Clone Back') {
       parallel {
-        stage('CHECK') {
+        stage('GIT PUSH') {
           steps {
-            git(url: 'https://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@github.com/fesflabs/diarias', branch: 'main')
+            sh 'git clone -b main https://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@github.com/fesflabs/diarias'
           }
-        }
-
+        } //cria .env 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/diarias_producao/.env'
+            sh 'cp /home/jenkins/var/envback /home/jenkins/workspace/diarias_producao/diarias/.env'
           }
         }
-
+      }
+    } //Para containers rodando para evitar conflito de ID 
+        stage('Acessa Back'){
+      steps {
+        sh 'cd /home/jenkins/workspace/diarias_dev/diarias && docker-compose down'
+      }
+    }   
+    stage('Apagando front'){
+      steps{
+        sh 'rm -rf diarias-front'
       }
     }
-
+    stage('Push front') { //clona front do repositório 
+      parallel {
+        stage('Clone Front ') {
+          steps {
+            sh 'git clone -b main https://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@github.com/fesflabs/diarias-front'
+          }
+        } //cria .env front-end
+        stage('criar .env') {
+          steps {
+            sh 'cp /home/jenkins/var/envfront /home/jenkins/workspace/diarias_producao/diarias-front/.env'
+          }
+        }
+      }
+    }    //sanitiza maquinas
     stage('Limpando imagens e containers') {
       steps {
         sh 'docker system prune -a -f'
       }
     }
 
-    stage('build') {
+    stage('build') { //sobe containers
       steps {
-        sh 'docker-compose up -d'
+        sh 'cd diarias && docker-compose up -d'
+      }
+    }
+    stage('Listando Container'){
+      steps{
+        sh 'docker ps -a'
       }
     }
 
