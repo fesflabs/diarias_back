@@ -28,7 +28,7 @@ pipeline {
     } //Para containers rodando para evitar conflito de ID 
         stage('Acessa Back'){
       steps {
-        sh 'cd /home/jenkins/workspace/diarias_dev/diarias && docker-compose down'
+        sh 'cd /home/jenkins/workspace/diarias_producao/diarias && docker-compose down'
       }
     }   
     stage('Apagando front'){
