@@ -11,7 +11,7 @@ venv.back
 Jenkinsfile
 # Diretório de ambiente virtual
 venv/
-
+.venv
 limpar_pycache
 
 #Certificados

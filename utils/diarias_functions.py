@@ -69,8 +69,7 @@ async def calcular_valores(trechos, db):
                         valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
             else:
-                raise HTTPException(status_code=404, detail=f"Cidade {
-                                    trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
+                raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
             return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
     # Calcular valores das diárias para cada trecho individualmente
@@ -124,8 +123,7 @@ async def calcular_valores(trechos, db):
                         valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
                         valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
         else:
-            raise HTTPException(status_code=404, detail=f"Cidade {
-                                trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
+            raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
 
     return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
