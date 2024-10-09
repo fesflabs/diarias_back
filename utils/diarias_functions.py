@@ -7,16 +7,18 @@ import re
 
 # Valores das diárias em um dicionário
 VALORES_DIARIAS = {
-    "diaria_completa_fora_estado": 360,
-    "diaria_completa_estado_pequena": 180,
-    "diaria_completa_estado_grande": 270,
+    "diaria_completa_fora_estado": 360, 
+    "diaria_completa_dentro_estado": 270,
     "diaria_simples_fora_estado": 180,
-    "diaria_simples_estado_pequena": 90,
-    "diaria_simples_estado_grande": 135,
+    "diaria_simples_dentro_estado": 135,
+
+    "diaria_completa_fora_estado_coc": 540,
+    "diaria_completa_dentro_estado_coc": 450,
+    "diaria_simples_fora_estado_coc": 450,
+    "diaria_simples_dentro_estado_coc": 360,
 }
 
 CODIGO_BAHIA = 29
-LIMITE_HABITANTES = 100000
 
 cidades_sem_diaria = [
     "Lauro de Freitas", "Simões Filho", "Camaçari", "Dias d'Ávila",
@@ -62,15 +64,10 @@ async def calcular_valores(trechos, db):
                     valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
                     valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
                 else:
-                    if habitantes < LIMITE_HABITANTES:
-                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_pequena"]
-                        valor_total += VALORES_DIARIAS["diaria_simples_estado_pequena"]
-                    else:
-                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
-                        valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
+                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_dentro_estado"]
+                    valor_total += VALORES_DIARIAS["diaria_simples_dentro_estado"]
             else:
-                raise HTTPException(status_code=404, detail=f"Cidade {
-                                    trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
+                raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
             return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
     # Calcular valores das diárias para cada trecho individualmente
@@ -100,27 +97,18 @@ async def calcular_valores(trechos, db):
                         valor_diarias_completas += VALORES_DIARIAS["diaria_completa_fora_estado"]
                         valor_total += VALORES_DIARIAS["diaria_completa_fora_estado"]
                     else:
-                        if habitantes < LIMITE_HABITANTES:
-                            valor_diarias_completas += VALORES_DIARIAS["diaria_completa_estado_pequena"]
-                            valor_total += VALORES_DIARIAS["diaria_completa_estado_pequena"]
-                        else:
-                            valor_diarias_completas += VALORES_DIARIAS["diaria_completa_estado_grande"]
-                            valor_total += VALORES_DIARIAS["diaria_completa_estado_grande"]
+                        valor_diarias_completas += VALORES_DIARIAS["diaria_completa_dentro_estado"]
+                        valor_total += VALORES_DIARIAS["diaria_completa_dentro_estado"]
             elif (dt_retorno - dt_saida) > timedelta(hours=8):
                 quantidade_diarias_simples += 1
                 if estado_destino != CODIGO_BAHIA:
                     valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
                     valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
                 else:
-                    if habitantes < LIMITE_HABITANTES:
-                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_pequena"]
-                        valor_total += VALORES_DIARIAS["diaria_simples_estado_pequena"]
-                    else:
-                        valor_diarias_simples += VALORES_DIARIAS["diaria_simples_estado_grande"]
-                        valor_total += VALORES_DIARIAS["diaria_simples_estado_grande"]
+                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_dentro_estado"]
+                    valor_total += VALORES_DIARIAS["diaria_simples_dentro_estado"]
         else:
-            raise HTTPException(status_code=404, detail=f"Cidade {
-                                trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
+            raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
 
     return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
 
@@ -132,10 +120,6 @@ def verificar_duracao_total(trechos):
         f"{trechos[-1].dt_retorno} {trechos[-1].hr_retorno}", "%d/%m/%Y %H:%M")
     total_dias = (dt_retorno_ultimo_trecho.date() -
                   dt_saida_primeiro_trecho.date()).days
-
-    if total_dias > 8:
-        raise HTTPException(
-            status_code=400, detail="A duração total dos trechos não pode exceder 8 dias.")
 
 
 def validar_data(data: str) -> bool:
