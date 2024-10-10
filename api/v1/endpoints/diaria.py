@@ -18,6 +18,7 @@ async def calcular_diarias(
 
     trechos = request.trechos
     tipo_sd = request.tipo_sd
+    eh_curador = request.eh_curador
     codigo_sd = request.codigo_sd
     valor_sd = request.valor_sd
 
@@ -52,7 +53,7 @@ async def calcular_diarias(
                 status_code=400, detail="Estados de origem e destino são obrigatórios."
             )
 
-    quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total = await calcular_valores(trechos, db)
+    quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total = await calcular_valores(trechos, eh_curador, db)
 
     match tipo_sd:
         case "solicitação":
