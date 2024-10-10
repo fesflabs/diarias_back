@@ -10,12 +10,14 @@ VALORES_DIARIAS = {
     "diaria_completa_fora_estado": 360, 
     "diaria_completa_dentro_estado": 270,
     "diaria_simples_fora_estado": 180,
-    "diaria_simples_dentro_estado": 135,
+    "diaria_simples_dentro_estado": 135
+}
 
-    "diaria_completa_fora_estado_coc": 540,
-    "diaria_completa_dentro_estado_coc": 450,
-    "diaria_simples_fora_estado_coc": 450,
-    "diaria_simples_dentro_estado_coc": 360,
+VALORES_DIARIAS_CURADOR = {
+    "diaria_completa_fora_estado": 540, 
+    "diaria_completa_dentro_estado": 450,
+    "diaria_simples_fora_estado": 450,
+    "diaria_simples_dentro_estado": 360
 }
 
 CODIGO_BAHIA = 29
@@ -33,17 +35,19 @@ async def get_cidade_info(cidade_nome: str, estado: int, db: AsyncSession):
     if cidade:
         return {
             "estado": cidade.cod_estado,
-            "habitantes": cidade.habitantes
         }
     return None
 
 
-async def calcular_valores(trechos, db):
+async def calcular_valores(trechos, eh_curador, db):
     quantidade_diarias_simples = 0
     quantidade_diarias_completas = 0
     valor_diarias_simples = 0
     valor_diarias_completas = 0
     valor_total = 0
+    dict_valor_diarias = VALORES_DIARIAS
+    if eh_curador == True:
+        dict_valor_diarias = VALORES_DIARIAS_CURADOR
 
     # Verificar duração total dos trechos
     if len(trechos) > 1:
@@ -58,14 +62,13 @@ async def calcular_valores(trechos, db):
             trecho = trechos[-1]
             cidade_destino_info = await get_cidade_info(trecho.cidade_origem, trecho.estado_origem, db)
             if cidade_destino_info:
-                estado_destino = cidade_destino_info["estado"]
-                habitantes = cidade_destino_info["habitantes"]
+                estado_destino = cidade_destino_info["estado"]                    
                 if estado_destino != CODIGO_BAHIA:
-                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
-                    valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
+                    valor_diarias_simples += dict_valor_diarias["diaria_simples_fora_estado"]
+                    valor_total += dict_valor_diarias["diaria_simples_fora_estado"]
                 else:
-                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_dentro_estado"]
-                    valor_total += VALORES_DIARIAS["diaria_simples_dentro_estado"]
+                    valor_diarias_simples += dict_valor_diarias["diaria_simples_dentro_estado"]
+                    valor_total += dict_valor_diarias["diaria_simples_dentro_estado"]
             else:
                 raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
             return quantidade_diarias_simples, quantidade_diarias_completas, valor_diarias_simples, valor_diarias_completas, valor_total
@@ -84,7 +87,6 @@ async def calcular_valores(trechos, db):
 
         if cidade_destino_info:
             estado_destino = cidade_destino_info["estado"]
-            habitantes = cidade_destino_info["habitantes"]
 
             if estado_destino == CODIGO_BAHIA and trecho.cidade_origem == 'Salvador' and trecho.cidade_destino in cidades_sem_diaria:
                 continue
@@ -94,19 +96,19 @@ async def calcular_valores(trechos, db):
                 quantidade_diarias_completas += dias_viagem
                 for _ in range(dias_viagem):
                     if estado_destino != CODIGO_BAHIA:
-                        valor_diarias_completas += VALORES_DIARIAS["diaria_completa_fora_estado"]
-                        valor_total += VALORES_DIARIAS["diaria_completa_fora_estado"]
+                        valor_diarias_completas += dict_valor_diarias["diaria_completa_fora_estado"]
+                        valor_total += dict_valor_diarias["diaria_completa_fora_estado"]
                     else:
-                        valor_diarias_completas += VALORES_DIARIAS["diaria_completa_dentro_estado"]
-                        valor_total += VALORES_DIARIAS["diaria_completa_dentro_estado"]
+                        valor_diarias_completas += dict_valor_diarias["diaria_completa_dentro_estado"]
+                        valor_total += dict_valor_diarias["diaria_completa_dentro_estado"]
             elif (dt_retorno - dt_saida) > timedelta(hours=8):
                 quantidade_diarias_simples += 1
                 if estado_destino != CODIGO_BAHIA:
-                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_fora_estado"]
-                    valor_total += VALORES_DIARIAS["diaria_simples_fora_estado"]
+                    valor_diarias_simples += dict_valor_diarias["diaria_simples_fora_estado"]
+                    valor_total += dict_valor_diarias["diaria_simples_fora_estado"]
                 else:
-                    valor_diarias_simples += VALORES_DIARIAS["diaria_simples_dentro_estado"]
-                    valor_total += VALORES_DIARIAS["diaria_simples_dentro_estado"]
+                    valor_diarias_simples += dict_valor_diarias["diaria_simples_dentro_estado"]
+                    valor_total += dict_valor_diarias["diaria_simples_dentro_estado"]
         else:
             raise HTTPException(status_code=404, detail=f"Cidade {trecho.cidade_destino} no estado {trecho.estado_destino} não encontrada")
 

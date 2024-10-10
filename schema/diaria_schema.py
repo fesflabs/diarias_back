@@ -16,6 +16,7 @@ class Trecho(BaseModel):
 class Solicitacao(BaseModel):
     trechos: List[Trecho]
     tipo_sd: str
+    eh_curador: bool
     codigo_sd: Optional[str] = None
     valor_sd: Optional[float] = None
 
