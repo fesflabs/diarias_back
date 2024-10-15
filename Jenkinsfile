@@ -16,7 +16,7 @@ pipeline {
       parallel {
         stage('GIT PUSH') {
           steps {
-            sh 'git clone -b develop https://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@github.com/fesflabs/diarias'
+            sh 'git clone -b develop https://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@github.com/fesflabs/diarias'
           }
         } //cria .env 
         stage('criar .env') {
@@ -40,7 +40,7 @@ pipeline {
       parallel {
         stage('Clone Front ') {
           steps {
-            sh 'git clone -b main https://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@github.com/fesflabs/diarias-front'
+            sh 'git clone -b main https://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@github.com/fesflabs/diarias-front'
           }
         } //cria .env front-end
         stage('criar .env') {
