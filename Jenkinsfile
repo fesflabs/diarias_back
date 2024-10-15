@@ -21,7 +21,7 @@ pipeline {
         } //cria .env 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/envback /home/jenkins/workspace/diarias_dev/diarias/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias/.env'
           }
         }
       }
@@ -45,7 +45,7 @@ pipeline {
         } //cria .env front-end
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/envfront /home/jenkins/workspace/diarias_dev/diarias-front/.env'
+            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias-front/.env'
           }
         }
       }
