@@ -38,7 +38,7 @@ services:
     
   frontend:
     build:
-      context: /home/jenkins/workspace/diarias_producao/diarias-front
+      context: /home/jenkins/workspace/diarias_front_main/diarias-front
       dockerfile: Dockerfile
     container_name: frontend
     ports:
