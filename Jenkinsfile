@@ -1,9 +1,9 @@
 pipeline {
   agent {
     node {
-      label 'diariadev'
+      label 'diaridev'
     }
-//Apaga repositório anterior do back 
+
   }
   stages { 
     stage ('Removendo repositorio'){
@@ -21,14 +21,14 @@ pipeline {
         } //cria .env 
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias/.env'
+            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/diarias_producao/diarias/.env'
           }
         }
       }
     } //Para containers rodando para evitar conflito de ID 
         stage('Acessa Back'){
       steps {
-        sh 'cd /home/jenkins/workspace/diarias_dev/diarias && docker-compose down'
+        sh 'cd /home/jenkins/workspace/diarias_producao/diarias && docker-compose down'
       }
     }   
     stage('Apagando front'){
@@ -40,12 +40,12 @@ pipeline {
       parallel {
         stage('Clone Front ') {
           steps {
-            sh 'git clone -b main https://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@github.com/fesflabs/diarias-front'
+            sh 'git clone -b develop https://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@github.com/fesflabs/diarias-front'
           }
         } //cria .env front-end
         stage('criar .env') {
           steps {
-            sh 'cp /home/jenkins/variaveis/diarias/env /home/jenkins/workspace/diarias_dev/diarias-front/.env'
+            sh 'cp /home/jenkins/var/env /home/jenkins/workspace/diarias_producao/diarias-front/.env'
           }
         }
       }
